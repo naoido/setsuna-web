@@ -39,6 +39,7 @@ const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
 })
 
+// Vueアプリケーションを作成します
 const app = createApp({
   setup() {
     // Apollo Clientを提供します
@@ -47,5 +48,8 @@ const app = createApp({
   render: () => h(App),
 })
 
+// ルーターを使用するように設定します
 app.use(router)
+
+// アプリケーションをマウントします
 app.mount('#app')

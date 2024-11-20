@@ -5,6 +5,8 @@ go 1.23.3
 require (
 	github.com/99designs/gqlgen v0.17.56
 	github.com/gorilla/websocket v1.5.0
+	github.com/graph-gophers/dataloader/v7 v7.1.0
+	github.com/kamikazezirou/gql-example v0.0.0-20221226170908-6941933c711c
 	github.com/rs/cors v1.11.1
 	github.com/vektah/gqlparser/v2 v2.5.19
 )
