@@ -13,6 +13,9 @@ type NewTodo struct {
 type Query struct {
 }
 
+type Subscription struct {
+}
+
 
 
 type User struct {

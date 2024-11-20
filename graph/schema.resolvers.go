@@ -13,26 +13,42 @@ import (
 	"github.com/kenta-afk/gqlgen-todos/graph/model"
 )
 
-// CreateTodo is the resolver for the createTodo field.
+// CreateTodoはcreateTodoフィールドのリゾルバです。
 func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
+	// ランダムなIDを生成します。
 	randNumber, _ := rand.Int(rand.Reader, big.NewInt(100))
+	// 新しいTodoを作成します。
 	todo := &model.Todo{
 		Text:   input.Text,
 		ID:     fmt.Sprintf("T%d", randNumber),
 		UserID: input.UserID,
 		User:   &model.User{ID: input.UserID, Name: "user " + input.UserID},
 	}
+	// Todoリストに追加します。
 	r.todos = append(r.todos, todo)
+
+	// サブスクリプションに通知します。
+	r.mu.Lock()
+	for _, subscriber := range r.todoSubscribers {
+		subscriber <- todo
+	}
+	r.mu.Unlock()
+
 	return todo, nil
 }
 
-func (r *todoResolver) User(ctx context.Context, obj *model.Todo) (*model.User, error) {
-	return &model.User{ID: obj.UserID, Name: "user " + obj.UserID}, nil
-}
-
-// Todos is the resolver for the todos field.
+// Todosはtodosフィールドのリゾルバです。
 func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 	return r.todos, nil
+}
+
+// TodoAddedはtodoAddedフィールドのリゾルバです。
+func (r *subscriptionResolver) TodoAdded(ctx context.Context) (<-chan *model.Todo, error) {
+	todoChan := make(chan *model.Todo, 1)
+	r.mu.Lock()
+	r.todoSubscribers = append(r.todoSubscribers, todoChan)
+	r.mu.Unlock()
+	return todoChan, nil
 }
 
 // Mutation returns MutationResolver implementation.
@@ -41,6 +57,9 @@ func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+// Subscription returns SubscriptionResolver implementation.
+func (r *Resolver) Subscription() SubscriptionResolver { return &subscriptionResolver{r} }
+
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-type todoResolver struct{ *Resolver }
+type subscriptionResolver struct{ *Resolver }
