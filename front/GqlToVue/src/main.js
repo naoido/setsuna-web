@@ -16,7 +16,12 @@ const httpLink = createHttpLink({
 const wsLink = new WebSocketLink({
   uri: 'ws://localhost:8080/query',
   options: {
-    reconnect: true,
+    reconnect: true, // 接続が切れた場合に自動的に再接続するオプション
+    connectionParams: {
+      // 必要に応じて認証情報などを追加します
+    },
+    lazy: true, // 必要なときにのみ接続を確立します
+    inactivityTimeout: 30000, // 30秒間アクティビティがない場合に接続を切断します
   },
 })
 
@@ -51,5 +56,5 @@ const app = createApp({
 // ルーターを使用するように設定します
 app.use(router)
 
-// アプリケーションをマウントします
+// アプリケー���ョンをマウントします
 app.mount('#app')

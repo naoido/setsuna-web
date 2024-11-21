@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
@@ -32,6 +33,7 @@ func main() {
 				return true
 			},
 		},
+		KeepAlivePingInterval: 10 * time.Second, // KeepAlive設定を追加
 	})
 
 	// HTTPトランスポートを追加

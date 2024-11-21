@@ -21,13 +21,7 @@ type Query {
   todos: [Todo!]! # 全てのTodoを取得するクエリ
 }
 
-# 新しいTodoを作成するための入力型を定義しています。
-input NewTodo {
-  text: String! # 新しいTodoの内容
-  userId: String! # 新しいTodoを作成するユーザーのID
-}
-
-# Mutation型を定義しています。ミューテーションは新しいTodoを作成します。
+# Mutation型��定義しています。ミューテーションは新しいTodoを作成します。
 type Mutation {
   createTodo(input: NewTodo!): Todo! # 新しいTodoを作成するミューテーション
 }
@@ -35,4 +29,10 @@ type Mutation {
 # サブスクリプション型を定義しています。新しいTodoが作成されたときに通知します。
 type Subscription {
   todoAdded: Todo! # 新しいTodoが作成されたときに通知するサブスクリプション
+}
+
+# 新しいTodoを作成するための入力型を定義しています。
+input NewTodo {
+  text: String! # 新しいTodoの内容
+  userId: String! # 新しいTodoを作成するユーザーのID
 }
