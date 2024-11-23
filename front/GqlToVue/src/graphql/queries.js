@@ -25,3 +25,12 @@ export const ROOM_ADDED = gql`
     }
   }
 `
+
+// ユーザー登録ミューテーション
+export const POST_REGISTER = gql`
+  mutation PostRegister($email: EmailAddress!, $name: String!, $password: String!) {
+    post_register(input: { email: $email, name: $name, password: $password }) {
+      token
+    }
+  }
+`

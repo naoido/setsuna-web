@@ -1,9 +1,12 @@
+import './assets/base.css'
 import './assets/main.css'
 import { createApp, provide, h } from 'vue'
 import { ApolloClient, InMemoryCache, createHttpLink, split } from '@apollo/client/core'
 import { DefaultApolloClient } from '@vue/apollo-composable'
 import { WebSocketLink } from '@apollo/client/link/ws'
 import { getMainDefinition } from '@apollo/client/utilities'
+import { setContext } from '@apollo/client/link/context'
+import Cookies from 'js-cookie'
 import App from './App.vue'
 import router from './router'
 import { createVuetify } from 'vuetify'
@@ -23,11 +26,22 @@ const wsLink = new WebSocketLink({
   options: {
     reconnect: true, // 接続が切れた場合に自動的に再接続するオプション
     connectionParams: {
-      // 必要に応じて認証情報などを追加します
+      authToken: Cookies.get('authToken'), // クッキーからトークンを取得
     },
-    lazy: true, // 必要なときにのみ接続を確立します
-    inactivityTimeout: 30000, // 30秒間アクティビティがない場合に接続を切断します
+    lazy: true,
+    inactivityTimeout: 30000, // アイドルタイムアウトを設定
   },
+})
+
+// 認証リンクを作成します
+const authLink = setContext((_, { headers }) => {
+  const token = Cookies.get('authToken') // クッキーからトークンを取得
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : '',
+    },
+  }
 })
 
 // HTTPリンクとWebSocketリンクを分割します
@@ -40,7 +54,7 @@ const splitLink = split(
     )
   },
   wsLink,
-  httpLink
+  authLink.concat(httpLink)
 )
 
 // Apollo Clientを作成します

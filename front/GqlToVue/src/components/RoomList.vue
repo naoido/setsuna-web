@@ -1,23 +1,17 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col cols="12">
-        <v-toolbar flat>
-          <v-toolbar-title>Rooms</v-toolbar-title>
-        </v-toolbar>
-      </v-col>
-    </v-row>
+    <h1>Rooms</h1>
+    
     <v-row v-if="loading">
       <v-col cols="12" class="text-center">
         <v-progress-circular indeterminate color="primary"></v-progress-circular>
       </v-col>
     </v-row>
     <v-row v-else>
-      <v-col v-for="room in rooms" :key="room.id" cols="12" md="4">
-        <v-card class="mb-4">
-          <v-card-item>
+      <v-col v-for="room in rooms" :key="room.id" cols="12" md="6">
+        <v-card  color="white" hover link prepend-icon="mdi-fencing">
+          <v-card-item >
             <v-card-title>Room {{ room.id }}</v-card-title>
-            <v-card-subtitle>Users: {{ room.users.length }}</v-card-subtitle>
           </v-card-item>
         </v-card>
       </v-col>
@@ -27,13 +21,32 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { useQuery, useSubscription } from '@vue/apollo-composable'
-import { GET_ROOMS, ROOM_ADDED } from '../graphql/queries'
+import { useQuery, useSubscription, useMutation } from '@vue/apollo-composable'
+import { GET_ROOMS, ROOM_ADDED, POST_REGISTER } from '../graphql/queries'
+import Cookies from 'js-cookie'
 
 const rooms = ref([])
 const loading = ref(true)
 
+const email = ref('akb@a')
+const name = ref('ak')
+const password = ref('ak')
+
+
+
+
+//const { mutate: register, onDone } = useMutation(POST_REGISTER)
+
 onMounted(() => {
+  // ユーザー登録ミューテーションを実行し、トークンをクッキーに保存
+  //register({ email: email.value, name: name.value, password: password.value })
+  //onDone(({ data }) => {
+  //   if (data && data.post_register && data.post_register.token) {
+  //     Cookies.set('authToken', data.post_register.token, { expires: 7 }) // トークンをクッキーに保存（有効期限7日）
+  //     console.log('Token saved:', data.post_register.token)
+  //   }
+  // })
+
   const { result, loading: queryLoading, error } = useQuery(GET_ROOMS)
 
   if (error.value) {
@@ -62,24 +75,15 @@ onMounted(() => {
 </script>
 
 <style scoped>
-body {
-  background-color: white;
-}
 
-.v-toolbar-title {
-  font-size: 24px;
-  font-weight: bold;
-  color: black;
-}
 
 .v-card-title {
   font-size: 20px;
   font-weight: bold;
-  color: black;
-}
-
-.v-card-subtitle {
-  font-size: 16px;
   color: gray;
 }
+
+
+
+
 </style>
