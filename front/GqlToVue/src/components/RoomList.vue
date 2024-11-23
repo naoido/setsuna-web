@@ -38,14 +38,14 @@ const password = ref('ak')
 //const { mutate: register, onDone } = useMutation(POST_REGISTER)
 
 onMounted(() => {
-  // ユーザー登録ミューテーションを実行し、トークンをクッキーに保存
-  //register({ email: email.value, name: name.value, password: password.value })
-  //onDone(({ data }) => {
-  //   if (data && data.post_register && data.post_register.token) {
-  //     Cookies.set('authToken', data.post_register.token, { expires: 7 }) // トークンをクッキーに保存（有効期限7日）
-  //     console.log('Token saved:', data.post_register.token)
-  //   }
-  // })
+  /* ユーザー登録ミューテーションを実行し、トークンをクッキーに保存
+  register({ email: email.value, name: name.value, password: password.value })
+  onDone(({ data }) => {
+     if (data && data.post_register && data.post_register.token) {
+       Cookies.set('authToken', data.post_register.token, { expires: 7 }) // トークンをクッキーに保存（有効期限7日）
+       console.log('Token saved:', data.post_register.token)
+     }
+  })*/
 
   const { result, loading: queryLoading, error } = useQuery(GET_ROOMS)
 
