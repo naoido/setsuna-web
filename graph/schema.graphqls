@@ -2,12 +2,10 @@
 #
 # https://gqlgen.com/getting-started/
 
-# Todo型を定義しています。TodoはID、テキスト、完了状態、ユーザーを持ちます。
-type Todo {
-  id: ID!       # Todoの一意な識別子
-  text: String! # Todoの内容
-  done: Boolean! # Todoが完了しているかどうか
-  user: User!   # Todoを作成したユーザー
+# Room型を定義しています。RoomはIDとユーザーのリストを持ちます。
+type Room {
+  id: ID!
+  users: [User!]!
 }
 
 # User型を定義しています。UserはIDと名前を持ちます。
@@ -16,23 +14,22 @@ type User {
   name: String! # ユーザーの名前
 }
 
-# Query型を定義しています。クエリはTodoのリストを返します。
+# Query型を定義しています。クエリはRoomのリストを返します。
 type Query {
-  todos: [Todo!]! # 全てのTodoを取得するクエリ
+  rooms: [Room!]! # 全てのRoomを取得するクエリ
 }
 
-# Mutation型��定義しています。ミューテーションは新しいTodoを作成します。
+# Mutation型を定義しています。ミューテーションは新しいRoomを作成します。
 type Mutation {
-  createTodo(input: NewTodo!): Todo! # 新しいTodoを作成するミューテーション
+  createRoom(input: NewRoom!): Room! # 新しいRoomを作成するミューテーション
 }
 
-# サブスクリプション型を定義しています。新しいTodoが作成されたときに通知します。
+# サブスクリプション型を定義しています。新しいRoomが作成されたときに通知します。
 type Subscription {
-  todoAdded: Todo! # 新しいTodoが作成されたときに通知するサブスクリプション
+  roomAdded: Room! # 新しいRoomが作成されたときに通知するサブスクリプション
 }
 
-# 新しいTodoを作成するための入力型を定義しています。
-input NewTodo {
-  text: String! # 新しいTodoの内容
-  userId: String! # 新しいTodoを作成するユーザーのID
+# 新しいRoomを作成するための入力型を定義しています。
+input NewRoom {
+  userIds: [ID!]!
 }

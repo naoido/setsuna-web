@@ -1,13 +1,11 @@
 import { gql } from '@apollo/client/core'
 
-// 全てのTodoを取得するクエリ
-export const GET_TODOS = gql`
-  query GetTodos {
-    todos {
+// 全ての部屋を取得するクエリ
+export const GET_ROOMS = gql`
+  query GetRooms {
+    rooms {
       id
-      text
-      done
-      user {
+      users {
         id
         name
       }
@@ -15,14 +13,12 @@ export const GET_TODOS = gql`
   }
 `
 
-// 新しいTodoが作成されたときに通知するサブスクリプション
-export const TODO_ADDED = gql`
-  subscription TodoAdded {
-    todoAdded {
+// 新しい部屋が作成されたときに通知するサブスクリプション
+export const ROOM_ADDED = gql`
+  subscription RoomAdded {
+    roomAdded {
       id
-      text
-      done
-      user {
+      users {
         id
         name
       }

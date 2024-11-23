@@ -6,6 +6,11 @@ import { WebSocketLink } from '@apollo/client/link/ws'
 import { getMainDefinition } from '@apollo/client/utilities'
 import App from './App.vue'
 import router from './router'
+import { createVuetify } from 'vuetify'
+import 'vuetify/styles'
+import '@mdi/font/css/materialdesignicons.css'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
 
 // HTTPリンクを作成します
 const httpLink = createHttpLink({
@@ -44,6 +49,11 @@ const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
 })
 
+const vuetify = createVuetify({
+  components,
+  directives,
+})
+
 // Vueアプリケーションを作成します
 const app = createApp({
   setup() {
@@ -55,6 +65,7 @@ const app = createApp({
 
 // ルーターを使用するように設定します
 app.use(router)
+app.use(vuetify)
 
-// アプリケー���ョンをマウントします
+// アプリケーションをマウントします
 app.mount('#app')

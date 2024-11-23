@@ -13,42 +13,46 @@ import (
 	"github.com/kenta-afk/gqlgen-todos/graph/model"
 )
 
-// Todosはtodosフィールドのリゾルバです。
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	return r.todos, nil
-}
-
-// TodoAddedはtodoAddedフィールドのリゾルバです。
-func (r *subscriptionResolver) TodoAdded(ctx context.Context) (<-chan *model.Todo, error) {
-	todoChan := make(chan *model.Todo, 1)
-	r.mu.Lock()
-	r.todoSubscribers = append(r.todoSubscribers, todoChan)
-	r.mu.Unlock()
-	return todoChan, nil
-}
-
-// CreateTodoはcreateTodoフィールドのリゾルバです。
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
+// CreateRoomはcreateRoomフィールドのリゾルバです。
+func (r *mutationResolver) CreateRoom(ctx context.Context, input model.NewRoom) (*model.Room, error) {
 	// ランダムなIDを生成します。
 	randNumber, _ := rand.Int(rand.Reader, big.NewInt(100))
-	// 新しいTodoを作成します。
-	todo := &model.Todo{
-		Text:   input.Text,
-		ID:     fmt.Sprintf("T%d", randNumber),
-		UserID: input.UserID,
-		User:   &model.User{ID: input.UserID, Name: "user " + input.UserID},
+	// 新しいRoomを作成します。
+	room := &model.Room{
+		ID: fmt.Sprintf("R%d", randNumber),
+		Users: func() []*model.User {
+			users := make([]*model.User, len(input.UserIds))
+			for i, userID := range input.UserIds {
+				users[i] = &model.User{ID: userID, Name: "user " + userID}
+			}
+			return users
+		}(),
 	}
-	// Todoリストに追加します。
-	r.todos = append(r.todos, todo)
+	// Roomリストに追加します。
+	r.rooms = append(r.rooms, room)
 
 	// サブスクリプションに通知します。
 	r.mu.Lock()
-	for _, subscriber := range r.todoSubscribers {
-		subscriber <- todo
+	for _, subscriber := range r.roomSubscribers {
+		subscriber <- room
 	}
 	r.mu.Unlock()
 
-	return todo, nil
+	return room, nil
+}
+
+// Roomsはroomsフィールドのリゾルバです。
+func (r *queryResolver) Rooms(ctx context.Context) ([]*model.Room, error) {
+	return r.rooms, nil
+}
+
+// RoomAddedはroomAddedフィールドのリゾルバです。
+func (r *subscriptionResolver) RoomAdded(ctx context.Context) (<-chan *model.Room, error) {
+	roomChan := make(chan *model.Room, 1)
+	r.mu.Lock()
+	r.roomSubscribers = append(r.roomSubscribers, roomChan)
+	r.mu.Unlock()
+	return roomChan, nil
 }
 
 // Mutation returns MutationResolver implementation.
@@ -63,3 +67,17 @@ func (r *Resolver) Subscription() SubscriptionResolver { return &subscriptionRes
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+/*
+	type Resolver struct {
+	rooms           []*model.Room
+	mu              sync.Mutex
+	roomSubscribers []chan *model.Room
+}
+*/
